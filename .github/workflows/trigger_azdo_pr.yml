@@ -17,3 +17,4 @@ jobs:
           azure-devops-project-url: "https://dev.azure.com/ni/Users"
           azure-pipeline-name: "cfuentes-pipelines"
           azure-devops-token: ${{ secrets.CFC_TOKEN }}
+          azure-pipeline-variables: '{"PR_BRANCH": ${{ github.ref_name }}}'
