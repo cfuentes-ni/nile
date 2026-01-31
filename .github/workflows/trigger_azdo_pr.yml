@@ -20,7 +20,7 @@ jobs:
           -H "Content-Type: application/json" \
           -X POST \
           -d '{"definition":{"id":29888},"parameters":"{}"}' \
-          "https://dev.azure.com/ni/DevCentral"/_apis/build/builds?api-version=7.1"
+          "https://dev.azure.com/ni/DevCentral/_apis/build/builds?api-version=7.1"
 
       - name: Set variables for manual run
         if: ${{ github.event_name == 'workflow_dispatch' }}
