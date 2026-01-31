@@ -16,6 +16,12 @@ jobs:
         run: |
           echo "BUILD_REF=${{ github.event.pull_request.head.sha }}" >> $GITHUB_ENV
           echo "REPO_URL=${{ github.server_url }}/${{ github.event.pull_request.head.repo.full_name }}.git" >> $GITHUB_ENV
+          curl -sS -u :${{ secrets.CFC_TOKEN }} \
+          -H "Content-Type: application/json" \
+          -X POST \
+          -d '{"definition":{"id":29888},"parameters":"{}"}' \
+          "https://dev.azure.com/ni/DevCentral"/_apis/build/builds?api-version=7.1"
+
       - name: Set variables for manual run
         if: ${{ github.event_name == 'workflow_dispatch' }}
         run: |
@@ -25,7 +31,7 @@ jobs:
         uses: Azure/pipelines@v1.2
         with:
           azure-devops-project-url: "https://dev.azure.com/ni/DevCentral"
-          azure-pipeline-name: "users/cfuentes/test-rtos-nile-pr-pipeline"
+          azure-pipeline-name: "test-rtos-nile-pr-pipeline"
           azure-devops-token: ${{ secrets.CFC_TOKEN }}
           azure-pipeline-variables: >
             {"BUILD_REF":"${{ env.BUILD_REF }}","REPO_URL":"${{ env.REPO_URL }}"}
