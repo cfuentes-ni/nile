@@ -25,7 +25,7 @@ jobs:
         uses: Azure/pipelines@v1.2
         with:
           azure-devops-project-url: "https://dev.azure.com/ni/DevCentral"
-          azure-pipeline-name: "test-rtos-nile-pr-pipeline"
+          azure-pipeline-name: "cfuentes/test-rtos-nile-pr-pipeline"
           azure-devops-token: ${{ secrets.CFC_TOKEN }}
           azure-pipeline-variables: >
             {"BUILD_REF":"${{ env.BUILD_REF }}","REPO_URL":"${{ env.REPO_URL }}"}
