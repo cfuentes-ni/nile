@@ -24,8 +24,8 @@ jobs:
       - name: Trigger Main
         uses: Azure/pipelines@v1.2
         with:
-          azure-devops-project-url: "https://dev.azure.com/ni/Users"
-          azure-pipeline-name: "cfuentes-pipelines"
+          azure-devops-project-url: "https://dev.azure.com/ni/DevCentral"
+          azure-pipeline-name: "test-rtos-nile-pr-pipeline"
           azure-devops-token: ${{ secrets.CFC_TOKEN }}
           azure-pipeline-variables: >
             {"BUILD_REF":"${{ env.BUILD_REF }}","REPO_URL":"${{ env.REPO_URL }}"}
