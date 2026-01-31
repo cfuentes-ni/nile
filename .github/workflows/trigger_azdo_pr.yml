@@ -28,4 +28,4 @@ jobs:
           azure-pipeline-name: "cfuentes-pipelines"
           azure-devops-token: ${{ secrets.CFC_TOKEN }}
           azure-pipeline-variables: >
-            {"BUILD_REF":"${{ env.BUILD_REF }}","REPO_URL":"${{ env.REPO_URL }}""}
+            {"BUILD_REF":"${{ env.BUILD_REF }}","REPO_URL":"${{ env.REPO_URL }}"}
