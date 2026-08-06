@@ -58,18 +58,14 @@ source mirror).
 
 External builders _should not_ add `ni-org.yml`.
 
-## Building images from NI-built IPK feeds
+## Building images from IPK feeds
 
-This repository supports a two-stage workflow:
+Use this to install packages from a prebuilt IPK feed during image assembly,
+instead of building those packages from source.
 
-1. Stage 1 builds and exports IPK feeds.
-2. Stage 2 builds images that consume those feeds.
+### HTTP(S) feed server
 
-For Stage 1 feed generation details, see `docs/feed_builds.md`.
-
-### Enable feed-based image assembly
-
-Include `kas/includes/image-from-feeds.yml` in your target configuration:
+1. Include `kas/includes/image-from-feeds.yml` in your target configuration:
 
 ```yaml
 header:
@@ -80,57 +76,33 @@ header:
     - kas/includes/image-from-feeds.yml
 ```
 
-`image-from-feeds.yml` enables:
+2. Set `NILE_FEEDS_URI` to your feed base URI. The feed should provide
+`all/`, `${MACHINE}/`, and `${TUNE_PKGARCH}/` subdirectories:
 
 ```conf
-BUILD_IMAGES_FROM_FEEDS = "1"
+NILE_FEEDS_URI = "http://nibuild-feed-server/path/to/ipk/export"
 ```
 
-It also maps `NILE_LOCAL_FEED_URI` into the OE feed variables used by
-rootfs package installation (`IPK_FEED_URIS`) and package-management feed
-config generation (`PACKAGE_FEED_URIS`, `PACKAGE_FEED_ARCHS`).
+If unset, `NILE_FEEDS_URI` defaults to `file://${DEPLOY_DIR_IPK}`.
 
-### Set the feed URI
+### Optional: feeds in shared filesystem path
 
-`NILE_LOCAL_FEED_URI` must point to the exported Stage 1 feed location.
+Use this only when `NILE_FEEDS_URI` is a `file://` path outside the build
+directory (for example, a local path or mounted fileshare on the host).
+Mount that host path with `KAS_EXTRA_ARGS` and set `NILE_FEEDS_URI` to the
+container-side path:
 
-- In internal CI, this is injected by pipeline infrastructure.
-- For local testing, set it in local configuration, for example:
-
-```conf
-NILE_LOCAL_FEED_URI = "file:///path/to/exported/feed"
+```bash
+KAS_EXTRA_ARGS="-v /host/path/to/feeds:/feeds" \
+  NILE_FEEDS_URI="file:///feeds" \
+  ./kas-container build kas/your-target.yml:kas/includes/image-from-feeds.yml
 ```
 
-`NILE_LOCAL_FEED_URI` should be the base URI whose subdirectories contain
-feed indexes for `all`, `${MACHINE}`, and `${TUNE_PKGARCH}`. The
-`image-from-feeds.yml` include generates corresponding `IPK_FEED_URIS`
-entries automatically.
+### Optional: feed-only packages
 
-If not explicitly set, `NILE_LOCAL_FEED_URI` defaults to:
-
-```conf
-NILE_LOCAL_FEED_URI = "file://${DEPLOY_DIR_IPK}"
-```
-
-For `file://` URIs used with `kas-container`, the path must exist inside
-the container. Mount the host feed export path into the container and point
-`NILE_LOCAL_FEED_URI` at the container-side mount path.
-
-### Feed-only packages
-
-If a package is only present in the feed (and does not have a build-time
-provider in the local recipe graph), append it through:
+If a package exists only in the feed (no local provider in your current build
+graph), append it via:
 
 ```conf
 IMAGE_INSTALL_NODEPS:append = " <feed-only-package>"
 ```
-
-Use `IMAGE_INSTALL_NODEPS` only for intentionally feed-provided packages.
-
-### OE-core patching model
-
-NILE tracks required OE-core behavior through patches applied from
-`kas/patches/oe-core/` via `kas/includes/base-config.yml`, including:
-
-- `BUILD_IMAGES_FROM_FEEDS` package-manager integration.
-- `PACKAGE_INSTALL_NODEPS` and `IMAGE_INSTALL_NODEPS` support.
