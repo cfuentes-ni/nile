@@ -94,7 +94,8 @@ config generation (`PACKAGE_FEED_URIS`, `PACKAGE_FEED_ARCHS`).
 
 `NILE_LOCAL_FEED_URI` must point to the exported Stage 1 feed location.
 
-- In internal CI, this is injected by pipeline infrastructure.
+- In automated build environments, set this through your environment-specific
+  configuration or variables.
 - For local testing, set it in local configuration, for example:
 
 ```conf
