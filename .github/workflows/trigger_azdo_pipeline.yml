@@ -44,9 +44,34 @@ jobs:
           wait-for-completion: true
           azure-pipeline-variables: >
             {"BUILD_REF":"${{ env.BUILD_REF }}","REPO_URL":"${{ env.REPO_URL }}"}
-      - name: Dump outputs
-        run: |
-          echo '${{ toJson(steps.trigger.outputs) }}'
       - name: Dump trigger step
         run: |
           echo '${{ toJson(steps.trigger_step) }}'
+
+      - name: Wait for Azure Pipeline
+        run: |
+          URL="${{ steps.trigger_step.outputs.pipeline-url }}"
+          RUN_ID=$(echo "$URL" | grep -oP 'buildId=\K[0-9]+')
+          echo "Run ID: $RUN_ID"
+
+          while true; do
+            response=$(curl -s \
+              -u ":${{ secrets.CFC_TOKEN }}" \
+              "https://dev.azure.com/ni/Users/_apis/pipelines/123/runs/$RUN_ID?api-version=7.1-preview.1")
+
+            state=$(echo "$response" | jq -r .state)
+            result=$(echo "$response" | jq -r .result)
+
+            echo "State=$state Result=$result"
+
+            if [ "$state" = "completed" ]; then
+              if [ "$result" = "succeeded" ]; then
+                exit 0
+              else
+                echo "Azure pipeline failed"
+                exit 1
+              fi
+            fi
+
+            sleep 30
+          done
