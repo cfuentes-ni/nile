@@ -35,6 +35,7 @@ jobs:
           echo "HEAD_REF=" >> $GITHUB_ENV
           echo "HEAD_SHA=" >> $GITHUB_ENV
       - name: Trigger Main
+        id: trigger_step
         uses: Azure/pipelines@v1.2
         with:
           azure-devops-project-url: "https://dev.azure.com/ni/Users"
@@ -43,3 +44,9 @@ jobs:
           wait-for-completion: true
           azure-pipeline-variables: >
             {"BUILD_REF":"${{ env.BUILD_REF }}","REPO_URL":"${{ env.REPO_URL }}"}
+      - name: Dump outputs
+        run: |
+          echo '${{ toJson(steps.trigger.outputs) }}'
+      - name: Dump trigger step
+        run: |
+          echo '${{ toJson(steps.trigger_step) }}'
