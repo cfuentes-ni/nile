@@ -13,9 +13,6 @@ jobs:
       - name: Set variables for PR run
         if: ${{ github.event_name == 'pull_request' }}
         run: |
-          echo "BUILD_REF=${{ github.event.pull_request.head.sha }}" >> $GITHUB_ENV
-          echo "REPO_URL=${{ github.server_url }}/${{ github.event.pull_request.head.repo.full_name }}.git" >> $GITHUB_ENV
-          echo "____________________________________"
           echo "MERGE_PR=true" >> $GITHUB_ENV
           echo "BASE_REPO_URL=${{ github.server_url }}/${{ github.repository }}.git" >> $GITHUB_ENV
           echo "BASE_REF=${{ github.event.pull_request.base.ref }}" >> $GITHUB_ENV
@@ -25,9 +22,6 @@ jobs:
       - name: Set variables for manual run
         if: ${{ github.event_name == 'workflow_dispatch' }}
         run: |
-          echo "BUILD_REF=${{ github.ref_name }}" >> $GITHUB_ENV
-          echo "REPO_URL=${{ github.server_url }}/${{ github.repository }}.git" >> $GITHUB_ENV
-          echo "____________________________________"
           echo "MERGE_PR=false" >> $GITHUB_ENV
           echo "BASE_REPO_URL=${{ github.server_url }}/${{ github.repository }}.git" >> $GITHUB_ENV
           echo "BASE_REF=${{ github.ref_name }}" >> $GITHUB_ENV
@@ -43,35 +37,43 @@ jobs:
           azure-devops-token: ${{ secrets.CFC_TOKEN }}
           wait-for-completion: true
           azure-pipeline-variables: >
-            {"BUILD_REF":"${{ env.BUILD_REF }}","REPO_URL":"${{ env.REPO_URL }}"}
+            {"MERGE_PR":"${{ env.MERGE_PR }}","BASE_REPO_URL":"${{ env.BASE_REPO_URL }}","BASE_REF":"${{ env.BASE_REF }}","HEAD_REPO_URL":"${{ env.HEAD_REPO_URL }}","HEAD_REF":"${{ env.HEAD_REF }}","HEAD_SHA":"${{ env.HEAD_SHA }}"}
       - name: Dump trigger step
         run: |
           echo '${{ toJson(steps.trigger_step) }}'
 
       - name: Wait for Azure Pipeline
+        shell: pwsh
+        env:
+          AZDO_TOKEN: ${{ secrets.CFC_TOKEN }}
         run: |
-          URL="${{ steps.trigger_step.outputs.pipeline-url }}"
-          RUN_ID=$(echo "$URL" | grep -oP 'buildId=\K[0-9]+')
-          echo "Run ID: $RUN_ID"
+          $url = "${{ steps.trigger_step.outputs.pipeline-url }}"
+          $runId = [regex]::Match($url, 'buildId=(\d+)').Groups[1].Value
 
-          while true; do
-            response=$(curl -s \
-              -u ":${{ secrets.CFC_TOKEN }}" \
-              "https://dev.azure.com/ni/Users/_apis/pipelines/123/runs/$RUN_ID?api-version=7.1-preview.1")
+          if ([string]::IsNullOrWhiteSpace($runId)) {
+            throw "Could not extract buildId from trigger output URL: $url"
+          }
 
-            state=$(echo "$response" | jq -r .state)
-            result=$(echo "$response" | jq -r .result)
+          Write-Host "Run ID: $runId"
 
-            echo "State=$state Result=$result"
+          $token = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(":$env:AZDO_TOKEN"))
+          $headers = @{ Authorization = "Basic $token"; 'Content-Type' = 'application/json' }
 
-            if [ "$state" = "completed" ]; then
-              if [ "$result" = "succeeded" ]; then
+          while ($true) {
+            $response = Invoke-RestMethod -Uri "https://dev.azure.com/ni/Users/_apis/build/builds/$runId?api-version=7.1" -Headers $headers
+
+            $state = $response.status
+            $result = $response.result
+
+            Write-Host "State=$state Result=$result"
+
+            if ($state -eq 'completed') {
+              if ($result -eq 'succeeded') {
                 exit 0
-              else
-                echo "Azure pipeline failed"
-                exit 1
-              fi
-            fi
+              }
 
-            sleep 30
-          done
+              throw "Azure pipeline failed"
+            }
+
+            Start-Sleep -Seconds 30
+          }
