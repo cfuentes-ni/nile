@@ -3,8 +3,6 @@ name: Trigger AzDO PR pipeline
 on:
   workflow_dispatch:
   pull_request:
-    branches:
-      - delete-base
 
 jobs:
   trigger-azdo-tests:
