@@ -60,7 +60,9 @@ jobs:
           $headers = @{ Authorization = "Basic $token"; 'Content-Type' = 'application/json' }
 
           while ($true) {
-            $response = Invoke-RestMethod -Uri "https://dev.azure.com/ni/Users/_apis/build/builds/$runId?api-version=7.1" -Headers $headers
+            $uri = "https://dev.azure.com/ni/Users/_apis/build/builds/${runId}?api-version=7.1"
+            Write-Host "Checking URI: $uri"
+            $response = Invoke-RestMethod -Uri $uri -Headers $headers
 
             $state = $response.status
             $result = $response.result
