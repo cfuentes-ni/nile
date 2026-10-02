@@ -58,11 +58,35 @@ jobs:
 
           $token = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(":$env:AZDO_TOKEN"))
           $headers = @{ Authorization = "Basic $token"; 'Content-Type' = 'application/json' }
+          $sleepSeconds = 60
+          $maxSleepSeconds = 300
 
           while ($true) {
             $uri = "https://dev.azure.com/ni/Users/_apis/build/builds/${runId}?api-version=7.1"
             Write-Host "Checking URI: $uri"
-            $response = Invoke-RestMethod -Uri $uri -Headers $headers
+            $response = $null
+            $attempt = 1
+            while ($attempt -le 3) {
+              try {
+                $response = Invoke-RestMethod -Uri $uri -Headers $headers -ErrorAction Stop
+                break
+              }
+              catch {
+                $statusCode = $null
+                if ($_.Exception.Response -and $_.Exception.Response.StatusCode) {
+                  $statusCode = [int]$_.Exception.Response.StatusCode
+                }
+
+                if ($attempt -eq 3 -or $statusCode -notin 408, 429, 500, 502, 503, 504) {
+                  throw
+                }
+
+                $retrySeconds = 10 * $attempt
+                Write-Host "Transient AzDO error (HTTP $statusCode). Retry $attempt/3 in $retrySeconds seconds."
+                Start-Sleep -Seconds $retrySeconds
+                $attempt++
+              }
+            }
 
             $state = $response.status
             $result = $response.result
@@ -77,5 +101,7 @@ jobs:
               throw "Azure pipeline failed"
             }
 
-            Start-Sleep -Seconds 30
+            Write-Host "Sleeping for $sleepSeconds seconds before the next status check"
+            Start-Sleep -Seconds $sleepSeconds
+            $sleepSeconds = [Math]::Min($sleepSeconds * 2, $maxSleepSeconds)
           }
