@@ -40,31 +40,6 @@ jobs:
           azure-devops-project-url: "https://dev.azure.com/ni/Users"
           azure-pipeline-name: "cfuentes-pipelines"
           azure-devops-token: ${{ secrets.CFC_TOKEN }}
+          wait-for-completion: true
           azure-pipeline-variables: >
             {"BUILD_REF":"${{ env.BUILD_REF }}","REPO_URL":"${{ env.REPO_URL }}"}
-
-      - name: Wait for Azure Pipeline
-        run: |
-          runId="${{ steps.trigger.outputs.runId }}"
-
-          while true; do
-            response=$(curl -s \
-              -u ":${{ secrets.CFC_TOKEN }}" \
-              "https://dev.azure.com/ni/Users/_apis/pipelines/123/runs/$runId?api-version=7.1-preview.1")
-
-            state=$(echo "$response" | jq -r .state)
-            result=$(echo "$response" | jq -r .result)
-
-            echo "State=$state Result=$result"
-
-            if [ "$state" = "completed" ]; then
-              if [ "$result" = "succeeded" ]; then
-                exit 0
-              else
-                echo "Azure pipeline failed"
-                exit 1
-              fi
-            fi
-
-            sleep 30
-          done
