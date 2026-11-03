@@ -17,7 +17,6 @@ repos:
 
   meta-xilinx:
     layers:
-      meta-xilinx-bsp:
       meta-xilinx-core:
       meta-xilinx-standalone:
 

@@ -70,7 +70,6 @@ repos:
     commit: "f24f5dde78fe9a8a30d56f0ee6699bed29f21bcf"  # tag: xlnx-rel-v2025.1
     layers:
       meta-xilinx-core:
-      meta-xilinx-bsp:
       meta-microblaze:
       meta-xilinx-multimedia:
       meta-xilinx-standalone:

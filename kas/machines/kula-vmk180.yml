@@ -16,7 +16,6 @@ repos:
 
   meta-xilinx:
     layers:
-      meta-xilinx-bsp:
       meta-microblaze:
       meta-xilinx-core:
       meta-xilinx-multimedia:
