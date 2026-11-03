@@ -8,7 +8,7 @@ INITRAMFS_IMAGE_BUNDLE = "1"
 # when generating a FIT image, which is to add an initramfs image into the FIT. The
 # following set of things undoes the changes that image-types-xilinx-qemu does in
 # the "INITRAMFS_IMAGE is set" case to get us back to "please just turn our .wic
-# into an sd card for qemu"
+# into an sd card for qemu".
 IMAGE_FSTYPES:remove = "cpio.gz.u-boot.qemu-sd-fatimg"
 IMAGE_FSTYPES += "wic.qemu-sd"
 QB_DEFAULT_FSTYPE = "wic.qemu-sd"
