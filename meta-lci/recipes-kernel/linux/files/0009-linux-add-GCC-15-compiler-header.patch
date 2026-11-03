@@ -1,0 +1,39 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Cristina Fuentes-Curiel <cristina.fuentes-curiel@emerson.com>
+Date: Wed, 5 Nov 2026 00:00:00 +0000
+Subject: [PATCH] linux: add GCC 15 compiler header
+
+The NI 3.2 Linux tree dispatches compiler-specific definitions by GCC
+major version but only carries headers through GCC 4. Reuse the existing
+compatibility definitions for the GCC 15 toolchain.
+
+Based on Joe Hershberger's GCC 13 compatibility header.
+
+Upstream-Status: Inappropriate [NI 3.2 kernel only]
+---
+ include/linux/compiler-gcc15.h | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+ create mode 100644 include/linux/compiler-gcc15.h
+
+diff --git a/include/linux/compiler-gcc15.h b/include/linux/compiler-gcc15.h
+new file mode 100644
+index 000000000000..e239dcc77be5
+--- /dev/null
++++ b/include/linux/compiler-gcc15.h
+@@ -0,0 +1,14 @@
++#ifndef __LINUX_COMPILER_H
++#error "Please don't include <linux/compiler-gcc15.h> directly, include <linux/compiler.h> instead."
++#endif
++
++#define __used                  __attribute__((__used__))
++#define __must_check            __attribute__((warn_unused_result))
++#define __compiler_offsetof(a,b) __builtin_offsetof(a,b)
++#define __always_inline         inline __attribute__((always_inline))
++#define uninitialized_var(x) x = x
++#define __cold                  __attribute__((__cold__))
++#define unreachable() __builtin_unreachable()
++#define __compiletime_object_size(obj) __builtin_object_size(obj, 0)
++#define __compiletime_warning(message) __attribute__((warning(message)))
++#define __compiletime_error(message) __attribute__((error(message)))
+-- 
+2.47.0
