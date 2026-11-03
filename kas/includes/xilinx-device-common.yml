@@ -4,13 +4,6 @@ header:
     - kas/includes/meta-xilinx.yml
 
 repos:
-  meta-xilinx-tools:
-    url: "https://github.com/Xilinx/meta-xilinx-tools.git"
-    path: "layers/meta-xilinx-tools"
-    branch: "rel-v2025.1"
-    layers:
-      .:
-
   meta-amd-adaptive-socs:
     url: "https://github.com/Xilinx/meta-amd-adaptive-socs.git"
     path: "layers/meta-amd-adaptive-socs"

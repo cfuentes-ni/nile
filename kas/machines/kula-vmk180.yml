@@ -22,10 +22,6 @@ repos:
       meta-xilinx-standalone:
       meta-xilinx-standalone-sdt:
 
-  meta-xilinx-tools:
-    layers:
-      .:
-
   meta-amd-adaptive-socs:
     layers:
       meta-amd-adaptive-socs-core:

@@ -14,11 +14,6 @@ repos:
       meta-xilinx-standalone:
       meta-xilinx-standalone-sdt:
 
-  meta-xilinx-tools:
-    branch: "rel-v2025.1"
-    layers:
-      .:
-
   meta-amd-adaptive-socs:
     branch: "rel-v2025.1"
     layers:

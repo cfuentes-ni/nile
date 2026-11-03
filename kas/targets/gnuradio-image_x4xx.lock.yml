@@ -28,7 +28,5 @@ overrides:
       commit: 18d58082b2458cf85438ac6e0f2f1fd0153318cb
     meta-xilinx:
       commit: f24f5dde78fe9a8a30d56f0ee6699bed29f21bcf
-    meta-xilinx-tools:
-      commit: 982572c8efe0070b198ed162c0a3f268b4a15d4a
     openembedded-core:
       commit: ae5a301091f5b0574ea7444aab40b309b6d9f3f2

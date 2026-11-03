@@ -14,7 +14,5 @@ overrides:
       commit: c734c2cb9713dbd6d50697a9f6c25ebdf3ae589e
     meta-xilinx:
       commit: d0d780700c061c4ca6007680d0e3b03f2dad7641
-    meta-xilinx-tools:
-      commit: 5545108b2e737b7920c2f5e0f766ebe300c2de19
     openembedded-core:
       commit: ae5a301091f5b0574ea7444aab40b309b6d9f3f2

@@ -20,10 +20,6 @@ repos:
       meta-xilinx-core:
       meta-xilinx-standalone:
 
-  meta-xilinx-tools:
-    layers:
-      .:
-
   # The VB-8034 needs none of the AMD adaptive SoC or OpenAMP layers that
   # xilinx-device-common.yml enables.
   meta-amd-adaptive-socs:

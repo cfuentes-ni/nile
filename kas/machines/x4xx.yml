@@ -75,9 +75,6 @@ repos:
       meta-xilinx-standalone:
       meta-xilinx-standalone-sdt:
 
-  meta-xilinx-tools:
-    commit: "982572c8efe0070b198ed162c0a3f268b4a15d4a"  # tag: xlnx-rel-v2025.1
-
   meta-amd-adaptive-socs:
     branch: "rel-v2025.1"
     layers:

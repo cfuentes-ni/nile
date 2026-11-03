@@ -7,11 +7,6 @@ header:
 
 machine: amd-cortexa9thf-neon-common
 
-local_conf_header:
-  xilinx-esw: |
-    XILINX_XSCT_VERSION = "2025.1"
-    XILINX_WITH_ESW = "xsct"
-
 repos:
   meta-xilinx:
     layers:
