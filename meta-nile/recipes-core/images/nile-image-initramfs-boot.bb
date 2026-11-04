@@ -15,6 +15,7 @@ IMAGE_FEATURES = ""
 IMAGE_LINGUAS = ""
 EXTRA_IMAGEDEPENDS = ""
 IMAGE_CLASSES:remove = "qemuboot-xilinx"
+BAD_RECOMMENDATIONS += "systemd-mime"
 
 # Don't allow the initramfs to contain a kernel, as kernel modules will depend
 # on the kernel image.
