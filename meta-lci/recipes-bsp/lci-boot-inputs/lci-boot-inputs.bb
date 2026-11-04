@@ -19,7 +19,6 @@ NILE_LCI_FEED_MAJOR ?= "27.0.0"
 SRC_URI = "${NILE_LCI_FEED_BASE}/${NILE_LCI_FEED_MAJOR}/${BOOT_INPUTS_VER}/inline/lci-boot-inputs-vb8034_${BOOT_INPUTS_VER}_${BOOT_INPUTS_ARCH}.ipk;downloadfilename=lci-boot-inputs.ipk;unpack=0"
 SRC_URI[sha256sum] = "3daa5df7bab9539aac13fb66b295ec06f58164306552e7205613cc5211d81bc0"
 
-S = "${WORKDIR}"
 LCI_BOOT_INPUTS_DIR = "${datadir}/lci-boot-inputs"
 
 do_configure[noexec] = "1"

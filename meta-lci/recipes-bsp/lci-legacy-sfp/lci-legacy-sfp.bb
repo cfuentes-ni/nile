@@ -15,8 +15,6 @@ NILE_LCI_FEED_MAJOR ?= "27.0.0"
 SRC_URI = "${NILE_LCI_FEED_BASE}/${NILE_LCI_FEED_MAJOR}/${LEGACY_ARTIFACTS_VER}/inline/lci-legacy-artifacts-vb8034_${LEGACY_ARTIFACTS_VER}_${LEGACY_ARTIFACTS_ARCH}.ipk;downloadfilename=lci-legacy-artifacts.ipk;unpack=0"
 SRC_URI[sha256sum] = "10b0a4418e73db16fe6001145e34ac0c8c075c45815f3a94ccf8d33e15ddc04d"
 
-S = "${WORKDIR}"
-
 inherit deploy
 
 do_configure[noexec] = "1"
