@@ -23,7 +23,7 @@ do_install[noexec] = "1"
 
 do_deploy() {
     cd ${WORKDIR}
-    ar x lci-legacy-artifacts.ipk data.tar.xz
+    ar x ${UNPACKDIR}/lci-legacy-artifacts.ipk data.tar.xz
     tar -xJf data.tar.xz -C ${WORKDIR}
     install -d ${DEPLOYDIR}
     install -m 0644 ${WORKDIR}/usr/local/natinst/share/lci/sfp.iso ${DEPLOYDIR}/sfp.iso

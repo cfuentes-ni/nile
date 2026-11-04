@@ -5,7 +5,7 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=d7810fab7487fb0aad327b76f1be7cd7"
 LINUX_VERSION = "3.2"
 PV = "${LINUX_VERSION}+git"
 
-SRC_URI = "git://github.com/ni/linux.git;protocol=https;branch=virtualbench/20.0/3.2 \
+SRC_URI = "git://github.com/ni/linux.git;protocol=https;branch=virtualbench/20.0/3.2;destsuffix=git \
 		   file://0001-linux-add-GCC-13-compiler-header.patch \
 		   file://0002-scripts-dtc-avoid-duplicate-yylloc-definition.patch \
 		   file://0003-ARM-8933-1-replace-Sun-Solaris-style-flag-on-section.patch \
@@ -16,7 +16,7 @@ SRC_URI = "git://github.com/ni/linux.git;protocol=https;branch=virtualbench/20.0
 		   file://0008-arm-dts-ni-vb80x4-disable-WiFi.patch"
 SRCREV = "95415112dbd6becf2ca9676c28d945de6cb9c6df"
 
-S = "${WORKDIR}/git"
+S = "${UNPACKDIR}/git"
 
 ARCH = "arm"
 KBUILD_DEFCONFIG = "ni_lci_defconfig"
