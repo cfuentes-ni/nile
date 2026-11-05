@@ -9,6 +9,6 @@ overrides:
     meta-openembedded:
       commit: c734c2cb9713dbd6d50697a9f6c25ebdf3ae589e
     meta-st-stm32mp:
-      commit: a5e5cef8442de4eb3afca97e4c4dddb0f25e4ae1
+      commit: 8780d1d1d109b329395e8da9537c431e653c3123
     openembedded-core:
       commit: ae5a301091f5b0574ea7444aab40b309b6d9f3f2
