@@ -1,7 +1,5 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
-COMPATIBLE_MACHINE:genesyszu-3eg = "genesyszu"
-
 SRC_URI:append:genesyszu = " \
 	file://0001-Commented-I2C-mux-code-for-Digilent-Genesys-ZU.patch \
 	file://0002-fsbl-Reset-usb-phys-and-hub-upon-board-init.patch \

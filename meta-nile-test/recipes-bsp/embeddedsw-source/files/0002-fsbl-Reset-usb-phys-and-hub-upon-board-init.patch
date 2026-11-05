@@ -1,21 +1,14 @@
-From fa266f19ac289158597b3473332c3ecf8f2857ed Mon Sep 17 00:00:00 2001
 From: Elod Gyorgy <elod.gyorgy@digilent.ro>
-Date: Tue, 29 Oct 2019 15:27:00 +0200
-Subject: [PATCH 2/5] fsbl: Reset usb phys and hub upon board init
+Subject: [PATCH] fsbl: Reset usb phys and hub upon board init
 
-Print board-specific message at current DEBUG level
----
- lib/sw_apps/zynqmp_fsbl/src/spi_gpio.c    | 184 ++++++++++++++++++++++
- lib/sw_apps/zynqmp_fsbl/src/spi_gpio.h    |  53 +++++++
- lib/sw_apps/zynqmp_fsbl/src/xfsbl_board.c |  91 +++++++++++
- lib/sw_apps/zynqmp_fsbl/src/xfsbl_board.h |  35 ++++
- 4 files changed, 363 insertions(+)
- create mode 100644 lib/sw_apps/zynqmp_fsbl/src/spi_gpio.c
- create mode 100644 lib/sw_apps/zynqmp_fsbl/src/spi_gpio.h
+Port the Genesys ZU board initialization to the SDT driver's base-address
+lookup APIs. CMake discovers spi_gpio.c through aux_source_directory.
+
+Upstream-Status: Inappropriate [board-specific initialization]
 
 diff --git a/lib/sw_apps/zynqmp_fsbl/src/spi_gpio.c b/lib/sw_apps/zynqmp_fsbl/src/spi_gpio.c
 new file mode 100644
-index 0000000000..26cd218df7
+index 0000000..9ec01fa
 --- /dev/null
 +++ b/lib/sw_apps/zynqmp_fsbl/src/spi_gpio.c
 @@ -0,0 +1,184 @@
@@ -82,10 +75,10 @@ index 0000000000..26cd218df7
 +static u8 recv_buf_[3];
 +
 +/*
-+ * @param dev_id SPI controller Device ID
++ * @param base_address SPI controller base address
 + * @param ssid slave-select ID of the GPIO expander (supported 0-2)
 + */
-+XStatus SpiGpioInit(u32 dev_id, u8 ss_id)
++XStatus SpiGpioInit(UINTPTR base_address, u8 ss_id)
 +{
 +	XSpiPs_Config *SpiConfig;
 +	XStatus Status;
@@ -95,7 +88,7 @@ index 0000000000..26cd218df7
 +	/*
 +	 * Initialize the SPI driver so that it's ready to use
 +	 */
-+	SpiConfig = XSpiPs_LookupConfig(dev_id);
++	SpiConfig = XSpiPs_LookupConfig(base_address);
 +	if (NULL == SpiConfig) {
 +		return XST_FAILURE;
 +	}
@@ -205,10 +198,10 @@ index 0000000000..26cd218df7
 +#endif//defined(XPS_BOARD_GZU_3EG) || defined(XPS_BOARD_GZU_5EV)
 diff --git a/lib/sw_apps/zynqmp_fsbl/src/spi_gpio.h b/lib/sw_apps/zynqmp_fsbl/src/spi_gpio.h
 new file mode 100644
-index 0000000000..cc2a66a057
+index 0000000..96922e0
 --- /dev/null
 +++ b/lib/sw_apps/zynqmp_fsbl/src/spi_gpio.h
-@@ -0,0 +1,53 @@
+@@ -0,0 +1,52 @@
 +/*
 + * MIT License
 + *
@@ -247,12 +240,11 @@ index 0000000000..cc2a66a057
 +#if defined(XPS_BOARD_GZU_3EG) || defined(XPS_BOARD_GZU_5EV)
 +#include "xstatus.h"
 +
-+#define SPI_GPIO_DEVICE_ID XPAR_PSU_SPI_0_DEVICE_ID
 +#define MCP23S08_REG_IODIR 0x00
 +#define MCP23S08_REG_IPOL 0x01
 +#define MCP23S08_REG_PORT 0x09
 +
-+XStatus SpiGpioInit(u32 dev_id, u8 ss_id);
++XStatus SpiGpioInit(UINTPTR base_address, u8 ss_id);
 +XStatus SpiGpioReadReg(u8 reg, u8* value);
 +XStatus SpiGpioWriteReg(u8 reg, u8 value);
 +#endif /* XPS_BOARD_GZU_3EG || XPS_BOARD_GZU_5EV */
@@ -263,10 +255,10 @@ index 0000000000..cc2a66a057
 +
 +#endif /* SRC_SPI_GPIO_H_ */
 diff --git a/lib/sw_apps/zynqmp_fsbl/src/xfsbl_board.c b/lib/sw_apps/zynqmp_fsbl/src/xfsbl_board.c
-index 328332402d..b1272a9244 100644
+index 504f008..7a8ab2a 100644
 --- a/lib/sw_apps/zynqmp_fsbl/src/xfsbl_board.c
 +++ b/lib/sw_apps/zynqmp_fsbl/src/xfsbl_board.c
-@@ -799,6 +799,94 @@ static void XFsbl_PcieReset(void)
+@@ -810,6 +810,94 @@ static void XFsbl_PcieReset(void)
  }
  #endif
  #endif
@@ -278,15 +270,15 @@ index 328332402d..b1272a9244 100644
 + * It resets the GPIO expander MCP23S08 using MIO13. Then through SS[1] of
 + * SPI0, it initializes it and cycles the USB PHY resets connected to it.
 + */
-+static u32 InitGpios()
++static u32 InitGpios(void)
 +{
-+#if defined(XPAR_PSU_SPI_0_DEVICE_ID) && defined (XPAR_PSU_GPIO_0_DEVICE_ID)
++#if defined(XPAR_XSPIPS_0_BASEADDR) && defined(XPAR_XGPIOPS_0_BASEADDR)
 +	u32 RegVal;
 +	XStatus Status;
 +	XGpioPs_Config* gpio_conf;
 +	XGpioPs gpio_inst;
 +
-+	gpio_conf = XGpioPs_LookupConfig(XPAR_PSU_GPIO_0_DEVICE_ID);
++	gpio_conf = XGpioPs_LookupConfig(XPAR_XGPIOPS_0_BASEADDR);
 +	if (NULL == gpio_conf) {
 +		XFsbl_Printf(DEBUG_GENERAL, "XFSBL_GZU_GPIO_FAIL\r\n");
 +		return XST_FAILURE;
@@ -306,7 +298,7 @@ index 328332402d..b1272a9244 100644
 +	(void)usleep(1);
 +
 +	//Init GPIO Expander
-+	if (XST_SUCCESS != (Status = SpiGpioInit(MCP23S08_SPI_DEVID, MCP23S08_SS_ID)))
++	if (XST_SUCCESS != (Status = SpiGpioInit(MCP23S08_SPI_BASEADDR, MCP23S08_SS_ID)))
 +	{
 +		XFsbl_Printf(DEBUG_GENERAL, "XFSBL_GZU_GPIOE_INITFAIL\r\n");
 +		return XST_FAILURE;
@@ -361,7 +353,7 @@ index 328332402d..b1272a9244 100644
  /*****************************************************************************/
  /**
   * This function does board specific initialization.
-@@ -828,6 +916,9 @@ u32 XFsbl_BoardInit(void)
+@@ -839,6 +927,9 @@ u32 XFsbl_BoardInit(void)
  #if defined(XPS_BOARD_ZCU102)
  	XFsbl_PcieReset();
  #endif
@@ -372,7 +364,7 @@ index 328332402d..b1272a9244 100644
  	Status = XFSBL_SUCCESS;
  	goto END;
 diff --git a/lib/sw_apps/zynqmp_fsbl/src/xfsbl_board.h b/lib/sw_apps/zynqmp_fsbl/src/xfsbl_board.h
-index 6177fb61f9..9ddd706faf 100644
+index 6177fb6..68cfb46 100644
 --- a/lib/sw_apps/zynqmp_fsbl/src/xfsbl_board.h
 +++ b/lib/sw_apps/zynqmp_fsbl/src/xfsbl_board.h
 @@ -179,6 +179,41 @@ typedef struct XVoutCommands {
@@ -390,7 +382,7 @@ index 6177fb61f9..9ddd706faf 100644
 + * If PSU_SPI_0 is not enabled and SS1 is not mapped to MIO14, init will fail.
 + * If PS GPIO is not enabled and MIO13 not mapped to it, init might fail.
 + */
-+#define MCP23S08_SPI_DEVID 0
++#define MCP23S08_SPI_BASEADDR XPAR_XSPIPS_0_BASEADDR
 +#define MCP23S08_SS_ID 1
 +#define PORTEXP_RESETN_PIN	13
 +#define MCP23S08_DEFAULTS \
@@ -417,6 +409,3 @@ index 6177fb61f9..9ddd706faf 100644
  u32 XFsbl_BoardInit(void);
  
  #ifdef __cplusplus
--- 
-2.35.1
-

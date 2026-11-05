@@ -29,12 +29,13 @@ diff --git a/arch/arm/mach-zynq/Kconfig b/arch/arm/mach-zynq/Kconfig
 index b4c439b4cd6..35fb89f01ae 100644
 --- a/arch/arm/mach-zynq/Kconfig
 +++ b/arch/arm/mach-zynq/Kconfig
-@@ -68,6 +68,7 @@ config ZYNQ_SDHCI_MAX_FREQ
+@@ -56,7 +56,8 @@ config ZYNQ_SDHCI_MAX_FREQ
  	default 52000000
  
  source "board/xilinx/Kconfig"
 +source "board/digilent/Kconfig"
  source "board/xilinx/zynq/Kconfig"
+ source "board/BuR/zynq/Kconfig"
  
  endif
 diff --git a/arch/arm/mach-zynqmp/Kconfig b/arch/arm/mach-zynqmp/Kconfig
@@ -104,4 +105,3 @@ index 00000000000..7784a9f350f
 +endif
 -- 
 2.47.3
-

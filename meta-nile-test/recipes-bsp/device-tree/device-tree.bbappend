@@ -1,13 +1,5 @@
-FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
+FILESEXTRAPATHS:prepend:genesyszu-3eg := "${THISDIR}/files/genesyszu_3eg:"
 
-SYSTEM_USER_DTSI ?= "${MACHINE_ARCH}/system-user.dtsi"
-
-COMPATIBLE_MACHINE:genesyszu-3eg = ".*"
-SRC_URI:append:genesyszu-3eg = " \
-		file://${SYSTEM_USER_DTSI} \
-		"
-
-do_configure:append() {
-	cp ${WORKDIR}/${SYSTEM_USER_DTSI} ${B}/device-tree
-	echo "#include \"system-user.dtsi\"" >> ${B}/device-tree/system-top.dts
-}
+# Linux board settings must not be added to the standalone FSBL/PMU trees.
+EXTRA_DT_INCLUDE_FILES:append:genesyszu-3eg = "${@' system-user.dtsi' if os.path.basename(d.getVar('CONFIG_DTFILE') or '') == 'cortexa53-linux.dts' else ''}"
+DT_INCLUDE:append:genesyszu-3eg = " ${SYSTEM_DTFILE_DIR}"
