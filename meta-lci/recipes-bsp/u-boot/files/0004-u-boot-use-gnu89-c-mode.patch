@@ -14,8 +14,7 @@ Upstream-Status: Inappropriate [NI U-Boot lci/20.0.0 only]
 diff --git a/config.mk b/config.mk
 --- a/config.mk
 +++ b/config.mk
-@@ -242,3 +242,4 @@
- # Xilinx, added to prevent unaligned accesses which started happening
+@@ -243,2 +243,3 @@
  # with GCC 4.5.2 tools
 +CFLAGS += -std=gnu89 -fgnu89-inline
  CFLAGS += $(call cc-option,-mno-unaligned-access)
