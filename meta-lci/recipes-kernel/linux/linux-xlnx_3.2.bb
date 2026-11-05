@@ -27,7 +27,7 @@ KERNEL_VERSION_SANITY_SKIP = "1"
 
 # GCC 13 turns open-coded copy/clear loops into memcpy()/memset() calls where
 # this 3.2 kernel cannot use them yet, hanging boot.
-EXTRA_OEMAKE:append = ' KCFLAGS="-fno-tree-loop-distribute-patterns"'
+EXTRA_OEMAKE:append = ' KCFLAGS="-std=gnu89 -fno-tree-loop-distribute-patterns"'
 
 COMPATIBLE_MACHINE = "^$"
 COMPATIBLE_MACHINE:vb8034 = "vb8034"
