@@ -11,14 +11,18 @@ Upstream-Status: Inappropriate [NI U-Boot lci/20.0.0 only]
 
 Signed-off-by: Joe Hershberger <joe.hershberger@ni.com>
 ---
- config.mk | 1 +
- 1 file changed, 1 insertion(+)
+ config.mk | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/config.mk b/config.mk
 index a53ca90491c4685809a306bff9489d85e8376c67..0000000 100644
 --- a/config.mk
 +++ b/config.mk
-@@ -243,0 +244,1 @@
+@@ -239,2 +239,4 @@
+ CFLAGS := $(CPPFLAGS) -Wall -Wstrict-prototypes
+ endif
 +CFLAGS += -std=gnu89 -fgnu89-inline
--- 
-2.47.0
++
+ # Xilinx, added to prevent unaligned accesses which started happening
+ # with GCC 4.5.2 tools
+ CFLAGS += $(call cc-option,-mno-unaligned-access)
