@@ -28,7 +28,7 @@ do_install() {
     # The IPK is an ar archive (debian-binary, control.tar.gz, data.tar.xz).
     cd ${WORKDIR}
     ar x ${UNPACKDIR}/lci-boot-inputs.ipk data.tar.xz
-    tar -xJf data.tar.xz -C ${WORKDIR}
+    tar --no-same-owner -xJf data.tar.xz -C ${WORKDIR}
     install -d ${D}${LCI_BOOT_INPUTS_DIR}
     install -m 0644 ${WORKDIR}/usr/local/natinst/share/lci-boot-inputs/* ${D}${LCI_BOOT_INPUTS_DIR}/
 }
