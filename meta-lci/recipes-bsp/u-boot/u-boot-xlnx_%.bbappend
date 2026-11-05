@@ -10,7 +10,7 @@ UBOOT_ELF:vb8034 = "u-boot"
 SRC_URI:append:vb8034 = " \
 	file://0002-u-boot-host-fdt-include-order.patch \
 	file://0003-u-boot-gcc13-fix-led-aliases.patch \
-	file://0004-u-boot-gcc13-restore-gnu89-inline.patch \
+	file://0004-u-boot-use-gnu89-c-mode.patch \
 	file://0005-u-boot-add-gcc15-compiler-header.patch \
 "
 
