@@ -6,14 +6,14 @@ LINUX_VERSION = "3.2"
 PV = "${LINUX_VERSION}+git"
 
 SRC_URI = "git://github.com/ni/linux.git;protocol=https;branch=virtualbench/20.0/3.2 \
-		   file://0001-linux-add-GCC-13-compiler-header.patch \
 		   file://0002-scripts-dtc-avoid-duplicate-yylloc-definition.patch \
 		   file://0003-ARM-8933-1-replace-Sun-Solaris-style-flag-on-section.patch \
 		   file://0004-ARM-uaccess-keep-put_user-value-in-r2.patch \
 		   file://0005-timeconst.pl-Eliminate-Perl-warning.patch \
 		   file://0006-kernel-sched-build-at-O1-under-GCC-13.patch \
 		   file://0007-ARM-8429-1-disable-GCC-SRA-optimization.patch \
-		   file://0008-arm-dts-ni-vb80x4-disable-WiFi.patch"
+		   file://0008-arm-dts-ni-vb80x4-disable-WiFi.patch \
+		   file://0009-linux-add-GCC-15-compiler-header.patch"
 SRCREV = "95415112dbd6becf2ca9676c28d945de6cb9c6df"
 
 ARCH = "arm"
