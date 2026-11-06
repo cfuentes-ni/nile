@@ -14,8 +14,7 @@ Upstream-Status: Inappropriate [Xilinx QEMU fork compatibility]
 diff --git a/linux-user/syscall.c b/linux-user/syscall.c
 --- a/linux-user/syscall.c
 +++ b/linux-user/syscall.c
-@@ -362,3 +362,8 @@
- /* sched_attr is not defined in glibc < 2.41 */
+@@ -363,2 +363,7 @@
 -#ifndef SCHED_ATTR_SIZE_VER0
 +#ifdef __GLIBC__
 +#if __GLIBC_PREREQ(2, 41)
