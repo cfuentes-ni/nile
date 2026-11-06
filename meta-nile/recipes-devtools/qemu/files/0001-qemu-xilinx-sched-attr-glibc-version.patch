@@ -1,0 +1,26 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+Date: Thu, 5 Nov 2026 00:00:00 +0000
+Subject: [PATCH] qemu-xilinx: check glibc version for sched_attr
+
+glibc 2.41 and newer defines struct sched_attr, but the Wrynose SDK
+headers do not define SCHED_ATTR_SIZE_VER0. Keep QEMU's fallback struct
+only for older glibc releases and non-glibc hosts.
+
+Upstream-Status: Inappropriate [Xilinx QEMU fork compatibility]
+---
+ linux-user/syscall.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/linux-user/syscall.c b/linux-user/syscall.c
+--- a/linux-user/syscall.c
++++ b/linux-user/syscall.c
+@@ -362,3 +362,8 @@
+ /* sched_attr is not defined in glibc < 2.41 */
+-#ifndef SCHED_ATTR_SIZE_VER0
++#ifdef __GLIBC__
++#if __GLIBC_PREREQ(2, 41)
++#define QEMU_GLIBC_HAS_SCHED_ATTR
++#endif
++#endif
++#ifndef QEMU_GLIBC_HAS_SCHED_ATTR
+ struct sched_attr {
